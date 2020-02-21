@@ -1,0 +1,1 @@
+call "func9_if"(0);

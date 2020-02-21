@@ -1,0 +1,1 @@
+call "func5_if"(0);

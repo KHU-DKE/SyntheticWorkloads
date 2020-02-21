@@ -1,0 +1,1 @@
+call "func2_if"(0);

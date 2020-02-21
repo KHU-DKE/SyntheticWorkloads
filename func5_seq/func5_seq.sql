@@ -1,0 +1,1 @@
+call "func5_seq"();

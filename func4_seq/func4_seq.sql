@@ -1,0 +1,1 @@
+call "func4_seq"();

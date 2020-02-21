@@ -1,0 +1,1 @@
+call "func8_seq"();
