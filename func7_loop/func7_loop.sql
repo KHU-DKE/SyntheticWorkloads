@@ -1,1 +1,0 @@
-call "func7_loop"(0,2000);

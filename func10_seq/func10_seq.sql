@@ -1,1 +1,0 @@
-call "func10_seq"();

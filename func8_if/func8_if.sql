@@ -1,1 +1,0 @@
-call "func8_if"(0);

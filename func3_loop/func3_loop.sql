@@ -1,1 +1,0 @@
-call "func3_loop"(0);
