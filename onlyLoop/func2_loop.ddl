@@ -80,10 +80,10 @@ year_total = select * from :v1
          UNION ALL 
          	 select * from :v2;
          	 
-t_s_firstyear = select * from :year_total  with hint(no_inline);
-t_s_secyear = select * from :year_total with hint(no_inline);
-t_w_firstyear = select * from :year_total with hint(no_inline);
-t_w_secyear = select * from :year_total with hint(no_inline);
+t_s_firstyear = select * from :year_total ;
+t_s_secyear = select * from :year_total ;
+t_w_firstyear = select * from :year_total ;
+t_w_secyear = select * from :year_total ;
 
 while :_year < 2002 do 
 SELECT t_s_secyear.customer_id, 

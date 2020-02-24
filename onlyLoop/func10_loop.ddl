@@ -19,19 +19,19 @@ every range of parameter, is inserted.
 ***********************************************************/
 
 
-CREATE PROCEDURE "func10_loop"(in dmsInfo integer) -- 365
+CREATE PROCEDURE "func10_loop"(in dmsInfo integer)
 as begin
 declare dms integer;
 dms = :dmsInfo;
 ssci = SELECT ss_customer_sk customer_sk, ss_item_sk item_sk, d_month_seq
        FROM store_sales, date_dim
        WHERE ss_sold_date_sk = d_date_sk 
-       GROUP BY ss_customer_sk, ss_item_sk, d_month_seq with hint(no_inline);
+       GROUP BY ss_customer_sk, ss_item_sk, d_month_seq ;
        
 csci = SELECT cs_bill_customer_sk customer_sk, cs_item_sk item_sk, d_month_seq
        FROM catalog_sales, date_dim
        WHERE cs_sold_date_sk = d_date_sk 
-       GROUP BY cs_bill_customer_sk, cs_item_sk, d_month_seq with hint(no_inline);
+       GROUP BY cs_bill_customer_sk, cs_item_sk, d_month_seq;
        
 while(:dms < 1209) DO
 ssci_2 = select * from :ssci where d_month_seq BETWEEN :dms AND :dms + 11;

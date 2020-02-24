@@ -40,7 +40,7 @@ ws = SELECT d_year                 AS ws_sold_year,
                   ON ws_sold_date_sk = d_date_sk 
          GROUP  BY d_year, 
                    ws_item_sk, 
-                   ws_bill_customer_sk, wr_order_number with hint(no_inline);
+                   ws_bill_customer_sk, wr_order_number ;
                    
 cs = SELECT d_year                 AS cs_sold_year, 
                 cs_item_sk, 
@@ -58,7 +58,7 @@ cs = SELECT d_year                 AS cs_sold_year,
          GROUP  BY d_year, 
                    cs_item_sk, 
                    cs_bill_customer_sk,
-                   cr_order_number with hint(no_inline);
+                   cr_order_number ;
 ss =SELECT d_year                 AS ss_sold_year , 
                 ss_item_sk, 
                 ss_customer_sk, 
@@ -75,7 +75,7 @@ ss =SELECT d_year                 AS ss_sold_year ,
          GROUP  BY d_year, 
                    ss_item_sk, 
                    ss_customer_sk,
-                   sr_ticket_number with hint(no_inline); 
+                   sr_ticket_number; 
                    
 while (:_year < 2002) DO
 SELECT ss_item_sk, 

@@ -84,7 +84,7 @@ v4 = select * from :v1
     union 
      select * from :v2
     union 
-     select * from :v3 with hint(no_inline);
+     select * from :v3;
 
 while (:_year > 1999) do
 curr_yr =
