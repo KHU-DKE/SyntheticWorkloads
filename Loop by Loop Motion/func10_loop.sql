@@ -1,0 +1,1 @@
+call "func10_loop"(1196);

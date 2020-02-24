@@ -1,0 +1,1 @@
+call "func2_loop"(2000);

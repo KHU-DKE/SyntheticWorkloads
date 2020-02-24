@@ -1,0 +1,1 @@
+call "func7_loop"(2000);
