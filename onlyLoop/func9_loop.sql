@@ -1,1 +1,0 @@
-call "func9_loop"(2000);

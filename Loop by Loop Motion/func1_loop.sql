@@ -1,1 +1,0 @@
-call "func1_loop"(2000);

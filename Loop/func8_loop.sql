@@ -19,10 +19,8 @@ template, the loop, which calculates the query iteratively for
 every range of parameter, is inserted. 
 **********************************************************************/
 
-create procedure "func8_loop_branch"(in threshold BIGINT, in yearInfo integer) as begin
-declare v1_cnt BIGINT;
-declare v2_cnt BIGINT;
-declare v3_cnt BIGINT;
+create procedure "func8_loop"(in yearInfo integer) as begin
+
 declare _year integer;
 declare v4 table (d_year integer, i_brand_id integer, i_class_id integer, i_category char(50), i_category_id integer,
  i_manufact_id integer, sales_cnt integer, sales_amt decimal(8,2));
@@ -82,22 +80,11 @@ v1 = SELECT d_year,
                                ON ( ws_order_number = wr_order_number
                                     AND ws_item_sk = wr_item_sk ) ;
 
-
-select count(*) into v1_cnt from :v1 where i_category = 'Men';
-select count(*) into v2_cnt from :v2 where i_category = 'Men';
-select count(*) into v3_cnt from :v3 where i_category = 'Men';
-
-if :v1_cnt > :threshold then
-v4 = select * from :v4 union select * from :v1;
-end if;
-
-if :v2_cnt > :threshold then
-v4 = select * from :v4 union select * from :v2;
-end if;
-
-if :v3_cnt > :threshold then
-v4 = select * from :v4 union select * from :v3;
-end if;
+v4 = select * from :v1
+    union 
+     select * from :v2
+    union 
+     select * from :v3;
 
 while (:_year > 1999) do
 curr_yr =
@@ -165,6 +152,5 @@ end while;
 
 end;
 
-
------- call func8_loop_branch
-call "func8_loop_branch"(0,2001);
+----- call func8_loop
+call "func8_loop"(2001);

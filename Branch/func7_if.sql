@@ -12,12 +12,8 @@ Then, each query with table variables is decomposed.
 
 In addition, we only caclulates year_total when the count of year_total 
 is bigger than threshold for adding branch to block inlining.
-
-Finally, for each scalar parameter that is used in the query
-template, the loop, which calculates the query iteratively for
-every range of parameter, is inserted. 
 **************************************************************/
-create procedure "func7_loop_branch"(in threshold bigint, in _year integer ) as begin
+create procedure "func7_if"(in threshold bigint) as begin
 declare total_cnt bigint;
 
 v1 = SELECT c_customer_id    customer_id, 
@@ -31,7 +27,7 @@ v1 = SELECT c_customer_id    customer_id,
                 date_dim 
          WHERE  c_customer_sk = ss_customer_sk 
                 AND ss_sold_date_sk = d_date_sk 
-                AND d_year IN ( :_year, :_year + 1 ) 
+                AND d_year IN ( 1999, 1999 + 1 ) 
          GROUP  BY c_customer_id, 
                    c_first_name, 
                    c_last_name, 
@@ -48,7 +44,7 @@ v2 = SELECT c_customer_id    customer_id,
                 date_dim 
          WHERE  c_customer_sk = ws_bill_customer_sk 
                 AND ws_sold_date_sk = d_date_sk 
-                AND d_year IN ( :_year, :_year + 1 ) 
+                AND d_year IN ( 1999, 1999 + 1 ) 
          GROUP  BY c_customer_id, 
                    c_first_name, 
                    c_last_name, 
@@ -62,7 +58,7 @@ t_w_firstyear = select * from :year_total;
 t_w_secyear = select * from :year_total;
 end if;
 
-while :_year < 2002 do 
+
 SELECT t_s_secyear.customer_id, 
                t_s_secyear.customer_first_name, 
                t_s_secyear.customer_last_name 
@@ -77,10 +73,10 @@ WHERE  t_s_secyear.customer_id = t_s_firstyear.customer_id
        AND t_w_firstyear.sale_type = 'w' 
        AND t_s_secyear.sale_type = 's' 
        AND t_w_secyear.sale_type = 'w' 
-       AND t_s_firstyear.year1 = :_year 
-       AND t_s_secyear.year1 = :_year + 1
-       AND t_w_firstyear.year1 = :_year 
-       AND t_w_secyear.year1 = :_year + 1
+       AND t_s_firstyear.year1 = 1999 
+       AND t_s_secyear.year1 = 2000
+       AND t_w_firstyear.year1 = 1999 
+       AND t_w_secyear.year1 = 2000 
        AND t_s_firstyear.year_total > 0 
        AND t_w_firstyear.year_total > 0 
        AND CASE 
@@ -97,10 +93,10 @@ ORDER  BY 1,
           2, 
           3
 LIMIT 100; 
-_year = :_year + 1;
-end while;
 end;
 
 
-------- call func7_loop_branch
-call "func7_loop_branch"(0,2000);
+
+
+------- call func7_if
+call "func7_if"(0);

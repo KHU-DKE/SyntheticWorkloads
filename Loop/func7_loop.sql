@@ -17,9 +17,9 @@ Finally, for each scalar parameter that is used in the query
 template, the loop, which calculates the query iteratively for
 every range of parameter, is inserted. 
 **************************************************************/
-create procedure "func7_loop_branch"(in threshold bigint, in _year integer ) as begin
-declare total_cnt bigint;
+create procedure "func7_loop"(in _year integer ) as begin
 
+while :_year < 2002 do 
 v1 = SELECT c_customer_id    customer_id, 
                 c_first_name     customer_first_name, 
                 c_last_name      customer_last_name, 
@@ -54,15 +54,13 @@ v2 = SELECT c_customer_id    customer_id,
                    c_last_name, 
                    d_year;
 year_total = select * from :v1 union all select * from :v2;
-select count(*) into total_cnt from :year_total;
-if (:total_cnt > :threshold) then
+
 t_s_firstyear = select * from :year_total;
 t_s_secyear = select * from :year_total;
 t_w_firstyear = select * from :year_total;
 t_w_secyear = select * from :year_total;
-end if;
 
-while :_year < 2002 do 
+
 SELECT t_s_secyear.customer_id, 
                t_s_secyear.customer_first_name, 
                t_s_secyear.customer_last_name 
@@ -102,5 +100,5 @@ end while;
 end;
 
 
-------- call func7_loop_branch
-call "func7_loop_branch"(0,2000);
+----- call func7_loop
+call "func7_loop"(2000);

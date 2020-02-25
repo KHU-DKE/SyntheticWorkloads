@@ -22,12 +22,9 @@ template, the loop, which calculates the query iteratively for
 every range of parameter, is inserted. 
 **************************************************************/
 
-create procedure "func9_loop_branch"(in threshold bigint, in yearInfo integer) as begin
-declare date_cnt bigint;
+create procedure "func9_loop"(in yearInfo integer) as begin
 declare _year integer;
 _year = :yearInfo;
-select count(*) into date_cnt from date_dim where d_year = :_year;
-if :date_cnt > :threshold then
 ws = SELECT d_year                 AS ws_sold_year, 
                 ws_item_sk, 
                 ws_bill_customer_sk    ws_customer_sk, 
@@ -43,7 +40,7 @@ ws = SELECT d_year                 AS ws_sold_year,
                   ON ws_sold_date_sk = d_date_sk 
          GROUP  BY d_year, 
                    ws_item_sk, 
-                   ws_bill_customer_sk, wr_order_number;
+                   ws_bill_customer_sk, wr_order_number ;
                    
 cs = SELECT d_year                 AS cs_sold_year, 
                 cs_item_sk, 
@@ -61,7 +58,7 @@ cs = SELECT d_year                 AS cs_sold_year,
          GROUP  BY d_year, 
                    cs_item_sk, 
                    cs_bill_customer_sk,
-                   cr_order_number;
+                   cr_order_number ;
 ss =SELECT d_year                 AS ss_sold_year , 
                 ss_item_sk, 
                 ss_customer_sk, 
@@ -79,7 +76,6 @@ ss =SELECT d_year                 AS ss_sold_year ,
                    ss_item_sk, 
                    ss_customer_sk,
                    sr_ticket_number; 
-end if;
                    
 while (:_year < 2002) DO
 SELECT ss_item_sk, 
@@ -125,5 +121,5 @@ end while;
 end;
 
 
------- call func9_loop_branch
-call "func9_loop_branch"(0,2000);
+----- call func9_loop
+call "func9_loop"(2000);

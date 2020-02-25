@@ -7,27 +7,15 @@ combinations with at least one store sale and one other
 channel sale, and to order the output by highest ratio.
 The detail steps for generating the procedure with loops
 by transforming CTE query are as follows. 
-The scalar parameter is threshold.
 
 The detail steps for generating the procedure with loops 
 by transforming CTE query are as follows. Each CTE table
 variable is transformed to the SQL assignment statement
 Then, each query with table variables is decomposed.
-
-In addition, we only caclulates ss when the count of ss when ss_sold_year > 1999 
-is bigger than threshold to add branch for blocking inlining.
-
-Finally, for each scalar parameter that is used in the query
-template, the loop, which calculates the query iteratively for
-every range of parameter, is inserted. 
 **************************************************************/
 
-create procedure "func9_loop_branch"(in threshold bigint, in yearInfo integer) as begin
-declare date_cnt bigint;
-declare _year integer;
-_year = :yearInfo;
-select count(*) into date_cnt from date_dim where d_year = :_year;
-if :date_cnt > :threshold then
+create procedure "func9_seq"() as begin
+
 ws = SELECT d_year                 AS ws_sold_year, 
                 ws_item_sk, 
                 ws_bill_customer_sk    ws_customer_sk, 
@@ -79,9 +67,17 @@ ss =SELECT d_year                 AS ss_sold_year ,
                    ss_item_sk, 
                    ss_customer_sk,
                    sr_ticket_number; 
-end if;
-                   
-while (:_year < 2002) DO
+
+swc = select * from :ss 
+       LEFT JOIN :ws 
+              ON ( ws_sold_year = ss_sold_year 
+                   AND ws_item_sk = ss_item_sk 
+                   AND ws_customer_sk = ss_customer_sk ) 
+       LEFT JOIN :cs 
+              ON ( cs_sold_year = ss_sold_year 
+                   AND cs_item_sk = cs_item_sk 
+                   AND cs_customer_sk = ss_customer_sk );      
+
 SELECT ss_item_sk, 
                Round(ss_qty / ( COALESCE(ws_qty + cs_qty, 1) ), 2) ratio, 
                ss_qty                                              store_qty, 
@@ -95,18 +91,10 @@ SELECT ss_item_sk,
                other_chan_wholesale_cost, 
                COALESCE(ws_sp, 0) + COALESCE(cs_sp, 0) 
                other_chan_sales_price 
-FROM  :ss 
-       LEFT JOIN :ws 
-              ON ( ws_sold_year = ss_sold_year 
-                   AND ws_item_sk = ss_item_sk 
-                   AND ws_customer_sk = ss_customer_sk ) 
-       LEFT JOIN :cs 
-              ON ( cs_sold_year = ss_sold_year 
-                   AND cs_item_sk = cs_item_sk 
-                   AND cs_customer_sk = ss_customer_sk )      
+FROM  :swc
 WHERE  COALESCE(ws_qty, 0) > 0 
        AND COALESCE(cs_qty, 0) > 0 
-       and  ss_sold_year = :_year
+       and  ss_sold_year = 1999
        and  wr_order_number is null
        and sr_ticket_number is null
        and cr_order_number is null
@@ -120,10 +108,9 @@ ORDER  BY ss_item_sk,
           other_chan_sales_price, 
           Round(ss_qty / ( COALESCE(ws_qty + cs_qty, 1) ), 2)
 LIMIT 100; 
-_year = :_year + 1;
-end while;
 end;
 
 
------- call func9_loop_branch
-call "func9_loop_branch"(0,2000);
+
+------ call func9_seq
+call "func9_seq"();

@@ -1,1 +1,0 @@
-call "func6_loop"(1196);
